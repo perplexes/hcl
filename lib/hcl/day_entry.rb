@@ -17,6 +17,14 @@ module HCl
     def self.from_xml xml
       doc = REXML::Document.new xml
       raise Failure, "No root node in XML document: #{xml}" if doc.root.nil?
+      if doc.root.name == 'error'
+        doc.root.elements.collect('//message') do |e| 
+          raise Failure, e.children.to_s.
+            # Grr, XML.
+            gsub(/&lt;.*?&gt;/,'"').gsub(/\+/, ' ')
+        end
+      end
+      
       Task.cache_tasks doc
       doc.root.elements.collect('//day_entry') do |day|
         new xml_to_hash(day)

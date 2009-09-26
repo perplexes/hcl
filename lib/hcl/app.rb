@@ -5,6 +5,7 @@ require 'net/http'
 require 'net/https'
 
 ## gem dependencies
+require 'rubygems'
 require 'chronic'
 require 'trollop'
 require 'highline/import'
@@ -79,7 +80,7 @@ module HCl
           show
         end
       rescue TimesheetResource::Failure => e
-        puts "Internal failure. #{e}"
+        puts "Internal failure. #{e.message}"
         exit 1
       end
     end

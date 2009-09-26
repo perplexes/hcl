@@ -46,4 +46,21 @@ class DayEntryTest < Test::Unit::TestCase
     entry.append_note('hi world')
     assert_equal ' hi world', entry.notes
   end
+  
+  should "raise on errors from Harvest" do
+    begin
+      HCl::DayEntry.from_xml(<<-EOD)
+        <?xml version="1.0" encoding="UTF-8"?>
+        <error>
+          <kind>InvoicedHours</kind>
+          <message>    You cannot add time to
+            &lt;em&gt;Customer+dev&lt;/em&gt;, because the project has been
+            invoiced and locked for this time period.
+        </message>
+        </error>
+      EOD
+    rescue HCl::TimesheetResource::Failure => ohnoes
+      assert_equal true, !!(ohnoes.message =~ /invoiced and locked/)
+    end
+  end
 end
